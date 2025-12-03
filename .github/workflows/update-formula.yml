@@ -46,10 +46,18 @@ jobs:
 
       - name: Commit changes
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          VERSION: ${{ github.event.client_payload.version }}
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add Formula/tracekit.rb
           git commit -m "Update tracekit to ${VERSION}"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/Tracekit-Dev/homebrew-tap.git
+
+          # Use PAT token if available, otherwise fail with clear message
+          if [ -n "$PAT_TOKEN" ]; then
+            git push https://x-access-token:${PAT_TOKEN}@github.com/Tracekit-Dev/homebrew-tap.git
+          else
+            echo "ERROR: PAT_TOKEN secret not set. Please add it to repository secrets."
+            exit 1
+          fi

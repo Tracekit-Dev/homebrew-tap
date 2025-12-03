@@ -1,0 +1,51 @@
+name: Update Formula
+
+on:
+  repository_dispatch:
+    types: [new-release]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update formula
+        env:
+          VERSION: ${{ github.event.client_payload.version }}
+        run: |
+          echo "Updating formula to version ${VERSION}"
+
+          # Download checksums
+          DARWIN_ARM64=$(curl -sL https://github.com/Tracekit-Dev/cli/releases/download/${VERSION}/tracekit-darwin-arm64.sha256 | awk '{print $1}')
+          DARWIN_AMD64=$(curl -sL https://github.com/Tracekit-Dev/cli/releases/download/${VERSION}/tracekit-darwin-amd64.sha256 | awk '{print $1}')
+          LINUX_ARM64=$(curl -sL https://github.com/Tracekit-Dev/cli/releases/download/${VERSION}/tracekit-linux-arm64.sha256 | awk '{print $1}')
+          LINUX_AMD64=$(curl -sL https://github.com/Tracekit-Dev/cli/releases/download/${VERSION}/tracekit-linux-amd64.sha256 | awk '{print $1}')
+
+          echo "Checksums retrieved:"
+          echo "  darwin-arm64: ${DARWIN_ARM64}"
+          echo "  darwin-amd64: ${DARWIN_AMD64}"
+          echo "  linux-arm64:  ${LINUX_ARM64}"
+          echo "  linux-amd64:  ${LINUX_AMD64}"
+
+          # Update version
+          sed -i "s/version \".*\"/version \"${VERSION#v}\"/" Formula/tracekit.rb
+
+          # Update download URLs
+          sed -i "s|download/v[^/]*/|download/${VERSION}/|g" Formula/tracekit.rb
+
+          # Update checksums
+          sed -i "0,/sha256 \".*\"/{s/sha256 \".*\"/sha256 \"${DARWIN_ARM64}\"/}" Formula/tracekit.rb
+          sed -i "0,/sha256 \".*\"/{s/sha256 \".*\"/sha256 \"${DARWIN_AMD64}\"/}" Formula/tracekit.rb
+          sed -i "0,/sha256 \".*\"/{s/sha256 \".*\"/sha256 \"${LINUX_ARM64}\"/}" Formula/tracekit.rb
+          sed -i "0,/sha256 \".*\"/{s/sha256 \".*\"/sha256 \"${LINUX_AMD64}\"/}" Formula/tracekit.rb
+
+          echo "Formula updated successfully"
+
+      - name: Commit changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add Formula/tracekit.rb
+          git commit -m "Update tracekit to ${VERSION}"
+          git push

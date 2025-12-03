@@ -49,15 +49,14 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           VERSION: ${{ github.event.client_payload.version }}
         run: |
+          # Configure git with token
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+
+          # Set remote URL with PAT token
+          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/Tracekit-Dev/homebrew-tap.git
+
+          # Commit and push
           git add Formula/tracekit.rb
           git commit -m "Update tracekit to ${VERSION}"
-
-          # Use PAT token if available, otherwise fail with clear message
-          if [ -n "$PAT_TOKEN" ]; then
-            git push https://x-access-token:${PAT_TOKEN}@github.com/Tracekit-Dev/homebrew-tap.git
-          else
-            echo "ERROR: PAT_TOKEN secret not set. Please add it to repository secrets."
-            exit 1
-          fi
+          git push origin main

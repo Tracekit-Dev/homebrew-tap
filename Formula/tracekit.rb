@@ -1,24 +1,24 @@
 class Tracekit < Formula
   desc "TraceKit CLI - Zero-friction APM setup for modern applications"
   homepage "https://tracekit.dev"
-  version "2.0.1"
+  version "2.0.2"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.1/tracekit-darwin-arm64"
-      sha256 "e98cef9f95321dbf2c565892399fb9dee74b5f77cc501c56865e2e9ea8ecfeaf"
+      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.2/tracekit-darwin-arm64"
+      sha256 "4aa02995924550409d5c376ecf4732444ef3f64a055ebb2d1ff1680f35e7c41a"
     else
-      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.1/tracekit-darwin-amd64"
+      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.2/tracekit-darwin-amd64"
       sha256 "f33ec670fb5e2c894005c0576418e2b7987256ece8304caad196584f072ebe1e"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.1/tracekit-linux-arm64"
+      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.2/tracekit-linux-arm64"
       sha256 "7760946a413d7a380fc3bda4abf658874b2492694865f8092dd75f21cae25d0e"
     else
-      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.1/tracekit-linux-amd64"
+      url "https://github.com/Tracekit-Dev/cli/releases/download/v2.0.2/tracekit-linux-amd64"
       sha256 "fcae95a935267cde7531eaf1d087b0cb5b73f82e9036c01fece2a994eefc3665"
     end
   end
